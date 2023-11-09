@@ -12,7 +12,7 @@ docker build --platform linux/amd64 / -t lab-dev-env .
 docker run \
     -v $(pwd):/home/project \
     -v /var/run/docker.sock:/var/run/docker.sock \
-    -v ~/.aws:/home/coder/.aws \
+    --mount type=bind,source=$HOME/.aws,target=/home/coder/.aws \
     -p1485:1485 \
     --name lab-dev-env \
     lab-dev-env
