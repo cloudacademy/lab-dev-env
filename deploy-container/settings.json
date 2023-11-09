@@ -1,0 +1,47 @@
+{
+  "files.enableTrash": false,
+  "workbench.silentNotifications": true,
+  "editor.autoSave": "on",
+  "editor.bracketPairColorization.enabled": true,
+  "workbench.colorTheme": "Default Dark Modern",
+  "workbench.startupEditor": "none",
+  "workbench.editorAssociations": {
+    "*.ipynb": "jupyter-notebook"
+  },
+  "git.enableSmartCommit": true,
+  "git.confirmSync": false,
+  "git.autofetch": true,
+  "security.workspace.trust.enabled": false,
+  "extensions.ignoreRecommendations": true,
+  "extensions.autoCheckUpdates": false,
+  "extensions.autoUpdate": false,
+  "update.mode": "none",
+  "python.showStartPage": false,
+  "terminal.integrated.sendKeybindingsToShell": true,
+  "editor.inlineSuggest.enabled": true,
+  "editor.inlineSuggest.showToolbar": "always",
+  "MarkdownPaste.path": "./assets",
+  "MarkdownPaste.rules": [
+    {
+      "regex": "^(https?://.*)",
+      "options": "ig",
+      "replace": "[]($1)"
+    }
+  ],
+  "markdownlint.config": {
+    "MD007": {
+      "indent": 4
+    },
+    "MD009": {
+      "br_spaces": 4
+    },
+    "MD029": false,
+    "MD041": false,
+    "MD045": false
+  },
+  "ltex.additionalRules.motherTongue": "en-US",
+  "ltex.completionEnabled": true,
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.python"
+  }
+}
