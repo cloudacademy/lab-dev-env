@@ -3,7 +3,7 @@
 ## Build
 
 ```sh
-docker build --platform linux/amd64 / -t lab-dev-env .
+docker build --platform linux/amd64 -t lab-dev-env .
 ```
 
 ## Using Container as a Development Environment
