@@ -6,7 +6,7 @@ USER coder
 ENV SHELL=/bin/bash
 
 # Install unzip + rclone (support for remote filesystem)
-RUN sudo apt-get update && sudo apt-get install unzip jq -y
+RUN sudo apt-get update && sudo apt-get install unzip jq wget -y
 RUN curl https://rclone.org/install.sh | sudo bash
 
 # Copy rclone tasks to /tmp, to potentially be used
@@ -107,6 +107,32 @@ RUN sudo apt-get install -y python3-pip
 RUN echo "source /usr/lib/google-cloud-sdk/completion.bash.inc" >> /home/coder/.bashrc && \
     echo "export CLOUDSDK_COMPONENT_MANAGER_DISABLE_UPDATE_CHECK=1" >> /home/coder/.bashrc && \
     sudo ln -sf /usr/bin/python3 /usr/bin/python
+
+## semtag
+ARG SEMTAG_VERSION=0.1.1
+RUN curl -L https://github.com/nico2sh/semtag/archive/refs/tags/v${SEMTAG_VERSION}.tar.gz -o /tmp/semtag.tar.gz && \
+    tar -zxvf /tmp/semtag.tar.gz -C /tmp && \
+    sudo mv /tmp/semtag-${SEMTAG_VERSION}/semtag /usr/bin && \
+    rm -rf /tmp/semtag.tar.gz /tmp/semtag-${SEMTAG_VERSION}/
+
+## yq
+ARG YQ_VERSION=4.35.2
+RUN sudo curl -L https://github.com/mikefarah/yq/releases/download/v${YQ_VERSION}/yq_linux_amd64 -o /usr/bin/yq && \
+    sudo chmod a+x /usr/bin/yq
+
+## imagemagick
+RUN sudo apt-get install -y imagemagick
+
+## nvm, node
+ARG NODE_VERSION=20.9.0
+RUN curl -L https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh -o /tmp/install.sh && \
+    bash /tmp/install.sh && \
+    source /home/coder/.bashrc && \
+    rm /tmp/install.sh && \
+    nvm install v${NODE_VERSION}
+
+## title-cli
+RUN npm install -g @jarmentor/title-cli
 
 ## AWS CLI
 ARG AWS_CLI_VERSION=2.13.33
