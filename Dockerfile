@@ -108,23 +108,24 @@ RUN echo "source /usr/lib/google-cloud-sdk/completion.bash.inc" >> /home/coder/.
     echo "export CLOUDSDK_COMPONENT_MANAGER_DISABLE_UPDATE_CHECK=1" >> /home/coder/.bashrc && \
     sudo ln -sf /usr/bin/python3 /usr/bin/python
 
-# AWS CLI
+## AWS CLI
 ARG AWS_CLI_VERSION=2.13.33
 RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64-$AWS_CLI_VERSION.zip" -o "/tmp/awscliv2.zip" \
     # && sudo mkdir -p /tmp \
     && sudo unzip /tmp/awscliv2.zip -d /tmp \
     && sudo /tmp/aws/install 
 
-# Azure CLI
-# ARG AZ_CLI_VERSION=2.28.0
-# RUN sudo mkdir -p /etc/apt/keyrings && \
-#     curl -sLS https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | sudo tee /etc/apt/keyrings/microsoft.gpg > /dev/null && \
-#     sudo chmod go+r /etc/apt/keyrings/microsoft.gpg && \
-#     AZ_DIST=$(lsb_release -cs) && \
-#     echo "deb [arch=`dpkg --print-architecture` signed-by=/etc/apt/keyrings/microsoft.gpg] https://packages.microsoft.com/repos/azure-cli/ $AZ_DIST main" | sudo tee /etc/apt/sources.list.d/azure-cli.list && \
-#     sudo apt-get install azure-cli=$AZ_CLI_VERSION-1~$AZ_DIST
+## Azure CLI
+ARG AZ_CLI_VERSION=2.53.1
+RUN sudo mkdir -p /etc/apt/keyrings && \
+    curl -sLS https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | sudo tee /etc/apt/keyrings/microsoft.gpg > /dev/null && \
+    sudo chmod go+r /etc/apt/keyrings/microsoft.gpg && \
+    AZ_DIST=$(lsb_release -cs) && \
+    echo "deb [arch=`dpkg --print-architecture` signed-by=/etc/apt/keyrings/microsoft.gpg] https://packages.microsoft.com/repos/azure-cli/ $AZ_DIST main" | sudo tee /etc/apt/sources.list.d/azure-cli.list && \
+    sudo apt-get update && \
+    sudo apt-get install -y azure-cli=$AZ_CLI_VERSION-1~$AZ_DIST
 
-# Terraform
+## Terraform
 ARG TERRAFORM=1.6.3
 RUN curl -O https://releases.hashicorp.com/terraform/${TERRAFORM}/terraform_${TERRAFORM}_linux_amd64.zip \
     && sudo unzip terraform_${TERRAFORM}_linux_amd64.zip \
@@ -132,8 +133,32 @@ RUN curl -O https://releases.hashicorp.com/terraform/${TERRAFORM}/terraform_${TE
     && sudo rm terraform_${TERRAFORM}_linux_amd64.zip \
     && terraform version
 
+## Docker
+RUN sudo apt-get install -y apt-transport-https ca-certificates curl gnupg lsb-release && \
+    sudo install -m 0755 -d /etc/apt/keyrings && \
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg && \
+    sudo chmod a+r /etc/apt/keyrings/docker.gpg && \
+    echo \
+        "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+        "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" | \
+        sudo tee /etc/apt/sources.list.d/docker.list > /dev/null && \
+    sudo apt-get update && \
+    VERSION_STRING=5:24.0.7-1~ubuntu.22.04~jammy && \
+    sudo apt-get install -y docker-ce=$VERSION_STRING docker-ce-cli=$VERSION_STRING containerd.io docker-buildx-plugin docker-compose-plugin && \
+    sudo usermod -aG docker coder && \
+    echo "sudo chgrp docker /var/run/docker.sock" >> /home/coder/.bashrc && \
+    echo "sudo chmod g+rwx /var/run/docker.sock" >> /home/coder/.bashrc && \
+    echo "alias docker-compose='docker compose'" >> /home/coder/.bashrc
+
+## Github CLI
+RUN type -p curl >/dev/null || (sudo apt update && sudo apt install curl -y) && \
+    curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg  && \
+    sudo chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg  && \
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null  && \
+    sudo apt update  && \
+    sudo apt install gh -y
+
 # Copy files: 
-# COPY deploy-container/myTool /home/coder/myTool
 COPY deploy-container/server.crt /etc/ssl/certs
 COPY deploy-container/server.key /etc/ssl/private
 RUN sudo chown coder:coder /etc/ssl/certs/server.crt && \

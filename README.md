@@ -13,6 +13,7 @@ docker run \
     -v $(pwd):/home/project \
     -v /var/run/docker.sock:/var/run/docker.sock \
     --mount type=bind,source=$HOME/.aws,target=/home/coder/.aws \
+    --mount type=bind,source=$HOME/.config/gh/,target=/home/coder/.config/gh \
     -p1485:1485 \
     --name lab-dev-env \
     lab-dev-env
@@ -51,3 +52,10 @@ Not started
 ## Extensions
 
 - Code Spell Checker
+
+
+## TODO
+
+- labs-cli
+- labs-cli-helpers
+- cloudacademy-labs-cli - VPN?, ~/.config/cloudacademy-labs-cli
