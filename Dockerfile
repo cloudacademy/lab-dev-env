@@ -179,7 +179,7 @@ RUN sudo chown coder:coder /etc/ssl/certs/server.crt && \
     sudo chmod og+rx /etc/ssl/private
 
 COPY labs-cli/lab /usr/local/bin/lab
-COPY labs-cli-helpers/common.sh /home/coder/labs-cli-helpers/
+COPY labs-cli-helpers /home/coder/labs-cli-helpers/
 
 # -----------
 

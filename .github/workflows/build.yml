@@ -46,13 +46,6 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - run: |
-          ls ${{ github.workspace }}
-      - run: |
-          ls ${{ github.workspace }}/labs-cli
-      - run: |
-          ls ${{ github.workspace }}/labs-cli-helpers
-
       - name: Build and push
         uses: docker/build-push-action@v4
         with:
