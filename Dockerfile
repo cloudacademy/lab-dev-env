@@ -125,19 +125,14 @@ RUN sudo apt-get install -y imagemagick
 
 ## nvm, node
 ARG NODE_VERSION=20.9.0
-RUN curl -L https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh -o /tmp/install.sh && \
-    bash /tmp/install.sh && \
-    source /home/coder/.bashrc && \
-    rm /tmp/install.sh && \
-    nvm install v${NODE_VERSION}
+RUN curl https://raw.githubusercontent.com/creationix/nvm/master/install.sh | bash
 
 ## title-cli
-RUN npm install -g @jarmentor/title-cli
+RUN PATH=$PATH:/home/coder/.nvm/versions/node/v20.9.0/bin/ && npm install -g @jarmentor/title-cli
 
 ## AWS CLI
 ARG AWS_CLI_VERSION=2.13.33
 RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64-$AWS_CLI_VERSION.zip" -o "/tmp/awscliv2.zip" \
-    # && sudo mkdir -p /tmp \
     && sudo unzip /tmp/awscliv2.zip -d /tmp \
     && sudo /tmp/aws/install 
 
