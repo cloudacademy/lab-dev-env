@@ -59,8 +59,6 @@ RUN code-server \
     --install-extension ms-azuretools.vscode-docker \
     --install-extension ms-dotnettools.vscode-dotnet-runtime \
     --install-extension ms-python.autopep8 \
-    --install-extension ms-python.isort \
-    --install-extension ms-python.pylint \
     --install-extension ms-python.python \
     --install-extension ms-python.vscode-pylance \
     --install-extension ms-toolsai.jupyter \
@@ -81,11 +79,6 @@ RUN code-server \
     --install-extension telesoho.vscode-markdown-paste-image \
     --install-extension VisualStudioExptTeam.intellicode-api-usage-examples \
     --install-extension VisualStudioExptTeam.vscodeintellicode \
-    --install-extension vscjava.vscode-java-debug \
-    --install-extension vscjava.vscode-java-dependency \
-    --install-extension vscjava.vscode-java-pack \
-    --install-extension vscjava.vscode-java-test \
-    --install-extension vscjava.vscode-maven \
     --install-extension vsls-contrib.codetour
 
 RUN mkdir -p /home/coder/.local/share/code-server/extensions/foxundermoon.shell-format-7.0.1-universal/bin/ && \
@@ -186,7 +179,8 @@ RUN sudo chown coder:coder /etc/ssl/certs/server.crt && \
     sudo chmod og+rx /etc/ssl/private
 
 COPY labs-cli/lab /usr/local/bin/lab
-COPY labs-cli-helpers /home/coder/labs-cli-helpers
+RUN mkdir -p /home/coder/labs-cli-helpers
+COPY labs-cli-helpers/ /home/coder/labs-cli-helpers
 
 # -----------
 
@@ -194,7 +188,7 @@ RUN sudo mkdir -p /home/project && \
     sudo chown -R coder:coder /home/project && \
     echo "PS1=\"${debian_chroot:+($debian_chroot)}\[\033[01;32m\]dev@calabs\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ \"" >> /home/coder/.bashrc && \
     echo "if [ -e /home/project/.init.sh ]; then source /home/project/.init.sh; fi" >> /home/coder/.bashrc && \
-    echo "labs_cli_helpers_path=/home/coder/labs-cli-helpers" >> /home/coder/.bashrc && \
+    echo "export labs_cli_helpers_path=/home/coder/labs-cli-helpers" >> /home/coder/.bashrc && \
     git config --global user.email "dev@cloudacademylabs.com" && \
     git config --global user.name "Developer"
 
