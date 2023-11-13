@@ -43,5 +43,6 @@
   "ltex.completionEnabled": true,
   "[python]": {
     "editor.defaultFormatter": "ms-python.python"
-  }
+  },
+  "redhat.telemetry.enabled": false
 }
