@@ -58,7 +58,6 @@ RUN code-server \
     --install-extension ms-azuretools.vscode-bicep \
     --install-extension ms-azuretools.vscode-docker \
     --install-extension ms-dotnettools.vscode-dotnet-runtime \
-    --install-extension ms-kubernetes-tools.vscode-kubernetes-tools \
     --install-extension ms-python.autopep8 \
     --install-extension ms-python.isort \
     --install-extension ms-python.pylint \
