@@ -160,8 +160,7 @@ RUN sudo apt-get install -y apt-transport-https ca-certificates curl gnupg lsb-r
     sudo apt-get install -y docker-ce=$VERSION_STRING docker-ce-cli=$VERSION_STRING containerd.io docker-buildx-plugin docker-compose-plugin && \
     sudo usermod -aG docker coder && \
     echo "sudo chgrp docker /var/run/docker.sock" >> /home/coder/.bashrc && \
-    echo "sudo chmod g+rwx /var/run/docker.sock" >> /home/coder/.bashrc && \
-    echo "alias docker-compose='docker compose'" >> /home/coder/.bashrc
+    echo "sudo chmod g+rwx /var/run/docker.sock" >> /home/coder/.bashrc
 
 ## Github CLI
 RUN type -p curl >/dev/null || (sudo apt update && sudo apt install curl -y) && \
@@ -172,6 +171,7 @@ RUN type -p curl >/dev/null || (sudo apt update && sudo apt install curl -y) && 
     sudo apt install gh -y
 
 # Copy files: 
+COPY deploy-container/docker-compose /usr/local/bin/docker-compose
 COPY deploy-container/server.crt /etc/ssl/certs
 COPY deploy-container/server.key /etc/ssl/private
 RUN sudo chown coder:coder /etc/ssl/certs/server.crt && \
