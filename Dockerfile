@@ -185,14 +185,18 @@ RUN sudo chown coder:coder /etc/ssl/certs/server.crt && \
     sudo chown coder:coder /etc/ssl/private/server.key && \
     sudo chmod og+rx /etc/ssl/private
 
+COPY labs-cli/lab /usr/local/bin/lab
+COPY labs-cli-helpers /home/coder/labs-cli-helpers
+
 # -----------
 
-RUN sudo mkdir -p /home/project \
-    && sudo chown -R coder:coder /home/project \
-    && echo "PS1=\"${debian_chroot:+($debian_chroot)}\[\033[01;32m\]dev@calabs\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ \"" >> /home/coder/.bashrc \
-    && echo "if [ -e /home/project/.init.sh ]; then source /home/project/.init.sh; fi" >> /home/coder/.bashrc \
-    && git config --global user.email "dev@cloudacademylabs.com" \
-    && git config --global user.name "Developer"
+RUN sudo mkdir -p /home/project && \
+    sudo chown -R coder:coder /home/project && \
+    echo "PS1=\"${debian_chroot:+($debian_chroot)}\[\033[01;32m\]dev@calabs\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ \"" >> /home/coder/.bashrc && \
+    echo "if [ -e /home/project/.init.sh ]; then source /home/project/.init.sh; fi" >> /home/coder/.bashrc && \
+    echo "labs_cli_helpers_path=/home/coder/labs-cli-helpers" >> /home/coder/.bashrc && \
+    git config --global user.email "dev@cloudacademylabs.com" && \
+    git config --global user.name "Developer"
 
 # Port
 ENV PORT=1485
