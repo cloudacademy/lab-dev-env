@@ -1,0 +1,20 @@
+// Place your key bindings in this file to override the defaultsauto[]
+[
+    {
+        "key": "cmd+k c",
+        "command": "workbench.files.action.compareFileWith"
+    },
+    {
+        "key": "alt+r",
+        "command": "workbench.action.terminal.runSelectedText",
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "ctrl+alt+s",
+        "command": "selectForCompare"
+    },
+    {
+        "key": "ctrl+alt+c",
+        "command": "compareFiles"
+    }
+]

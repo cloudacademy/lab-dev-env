@@ -177,6 +177,7 @@ COPY deploy-container/server.key /etc/ssl/private
 RUN sudo chown coder:coder /etc/ssl/certs/server.crt && \
     sudo chown coder:coder /etc/ssl/private/server.key && \
     sudo chmod og+rx /etc/ssl/private
+COPY deploy-container/keybindings.json /home/coder/.local/share/code-server/User/keybindings.json
 
 COPY labs-cli/lab /usr/local/bin/lab
 COPY labs-cli-helpers /home/coder/labs-cli-helpers/
