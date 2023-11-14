@@ -10,8 +10,9 @@ docker build --platform linux/amd64 -t lab-dev-env .
 
 ```sh
 docker run \
-    -v $(pwd):/home/project \
-    -v /var/run/docker.sock:/var/run/docker.sock \
+    -e HOST_PROJECT=$(pwd) \
+    --mount type=bind,source=$(pwd),target=/home/project \
+    --mount type=bind,source=/var/run/docker.sock,target=/var/run/docker.sock \
     --mount type=bind,source=$HOME/.aws,target=/home/coder/.aws \
     --mount type=bind,source=$HOME/.config/gh/,target=/home/coder/.config/gh \
     -p1485:1485 \
@@ -56,6 +57,5 @@ Not started
 
 ## TODO
 
-- labs-cli
-- labs-cli-helpers
-- cloudacademy-labs-cli - VPN?, ~/.config/cloudacademy-labs-cli
+- labs-cli tokens
+- labs-cli, labs-cli-helpers auto update
