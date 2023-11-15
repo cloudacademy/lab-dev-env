@@ -42,7 +42,7 @@
   "ltex.additionalRules.motherTongue": "en-US",
   "ltex.completionEnabled": true,
   "[python]": {
-    "editor.defaultFormatter": "ms-python.python"
+    "editor.defaultFormatter": "ms-python.autopep8"
   },
   "redhat.telemetry.enabled": false
 }
