@@ -87,7 +87,7 @@ RUN sudo apt-get install -y apt-transport-https ca-certificates gnupg lsb-releas
     echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list && \
     curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key --keyring /usr/share/keyrings/cloud.google.gpg add - && \
     sudo apt-get update && sudo apt-get install google-cloud-cli
-RUN sudo apt-get install -y python3-pip python3-dev build-essential libffi-dev python-dotenv==1.0.0
+RUN sudo apt-get install -y python3-pip python3-dev build-essential libffi-dev
 RUN echo "source /usr/lib/google-cloud-sdk/completion.bash.inc" >> /home/coder/.bashrc && \
     echo "export CLOUDSDK_COMPONENT_MANAGER_DISABLE_UPDATE_CHECK=1" >> /home/coder/.bashrc && \
     sudo ln -sf /usr/bin/python3 /usr/bin/python
@@ -97,7 +97,7 @@ COPY aws-vcf-env/requirements.txt /tmp/aws-requirements.txt
 COPY azure-vcf-env/requirements.txt /tmp/azure-requirements.txt
 COPY azure-vcf-env/prune_azure_mgmt_libs.sh /tmp/prune_azure_mgmt_libs.sh
 COPY gcp-vcf-env/requirements.txt /tmp/gcp-requirements.txt
-RUN python -m pip install -r /tmp/aws-requirements.txt -r /tmp/azure-requirements.txt -r /tmp/gcp-requirements.txt && \
+RUN python -m pip install -r /tmp/aws-requirements.txt -r /tmp/azure-requirements.txt -r /tmp/gcp-requirements.txt python-dotenv==1.0.0 && \
     sudo sed -i 's|mgmt_client_dir=.*|mgmt_client_dir=/home/coder/.local/lib/python3.10/site-packages/azure/mgmt|g' /tmp/prune_azure_mgmt_libs.sh && \
     bash /tmp/prune_azure_mgmt_libs.sh
 
