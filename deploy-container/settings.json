@@ -20,7 +20,7 @@
   "terminal.integrated.sendKeybindingsToShell": true,
   "editor.inlineSuggest.enabled": true,
   "editor.inlineSuggest.showToolbar": "always",
-  "MarkdownPaste.path": "./assets",
+"MarkdownPaste.path": "./assets",
   "MarkdownPaste.rules": [
     {
       "regex": "^(https?://.*)",
@@ -44,5 +44,8 @@
   "[python]": {
     "editor.defaultFormatter": "ms-python.autopep8"
   },
-  "redhat.telemetry.enabled": false
+  "redhat.telemetry.enabled": false,
+  "markdown.copyFiles.destination": {
+    "**/*": "assets/"
+  }
 }
