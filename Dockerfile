@@ -39,7 +39,6 @@ RUN sudo chown -R coder:coder /home/coder/.local && \
 RUN code-server \
     --install-extension 4ops.terraform \
     --install-extension aws-scripting-guy.cform \
-    --install-extension AzurePolicy.azurepolicyextension \
     --install-extension ClemensPeters.format-json \
     --install-extension DavidAnson.vscode-markdownlint \
     --install-extension dbaeumer.vscode-eslint \
@@ -47,12 +46,8 @@ RUN code-server \
     --install-extension foxundermoon.shell-format \
     --install-extension GitHub.copilot \
     --install-extension GitHub.copilot-chat \
-    --install-extension GitHub.copilot-labs \
     --install-extension github.vscode-github-actions \
     --install-extension hashicorp.terraform \
-    --install-extension kakumei.ts-debug \
-    --install-extension lukapetrovic.image-resizer \
-    --install-extension ms-azuretools.vscode-bicep \
     --install-extension ms-azuretools.vscode-docker \
     --install-extension ms-dotnettools.vscode-dotnet-runtime \
     --install-extension ms-python.autopep8 \
@@ -83,13 +78,16 @@ RUN mkdir -p /home/coder/.local/share/code-server/extensions/foxundermoon.shell-
 RUN curl -sSLo /tmp/highlight-line.vsix https://github.com/valentjn/vscode-ltex/releases/download/13.1.0/vscode-ltex-13.1.0-offline-linux-x64.vsix && \
     code-server --install-extension /tmp/vscode-ltex-13.1.0-offline-linux-x64.vsix -vvv && \
     rm -f /tmp/vscode-ltex-13.1.0-offline-linux-x64.vsix
+RUN curl -sSLo /tmp/ms-python.autopep8.vsix https://marketplace.visualstudio.com/_apis/public/gallery/publishers/ms-python/vsextensions/autopep8/2023.9.13201008/vspackage && \
+    code-server --install-extension /tmp/ms-python.autopep8.vsix -vvv && \
+    rm -f /tmp/ms-python.autopep8.vsix
 
 # gcloud
 RUN sudo apt-get install -y apt-transport-https ca-certificates gnupg lsb-release && \
     echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list && \
     curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key --keyring /usr/share/keyrings/cloud.google.gpg add - && \
     sudo apt-get update && sudo apt-get install google-cloud-cli
-RUN sudo apt-get install -y python3-pip python3-dev build-essential libffi-dev 
+RUN sudo apt-get install -y python3-pip python3-dev build-essential libffi-dev dotenv
 RUN echo "source /usr/lib/google-cloud-sdk/completion.bash.inc" >> /home/coder/.bashrc && \
     echo "export CLOUDSDK_COMPONENT_MANAGER_DISABLE_UPDATE_CHECK=1" >> /home/coder/.bashrc && \
     sudo ln -sf /usr/bin/python3 /usr/bin/python
