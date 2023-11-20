@@ -38,10 +38,7 @@ RUN sudo chown -R coder:coder /home/coder/.local && \
 # Use multiple --install-extension flags to install multiple extensions
 RUN code-server \
     --install-extension 4ops.terraform \
-    --install-extension 74th.monokai-charcoal-high-contrast \
-    --install-extension 74th.Theme-NaturalContrast-With-HC \
     --install-extension aws-scripting-guy.cform \
-    --install-extension azure-automation.vscode-azureautomation \
     --install-extension AzurePolicy.azurepolicyextension \
     --install-extension ClemensPeters.format-json \
     --install-extension DavidAnson.vscode-markdownlint \
@@ -66,10 +63,7 @@ RUN code-server \
     --install-extension ms-toolsai.jupyter-renderers \
     --install-extension ms-toolsai.vscode-jupyter-cell-tags \
     --install-extension ms-toolsai.vscode-jupyter-slideshow \
-    --install-extension ms-vscode-remote.remote-containers \
     --install-extension ms-vscode.azure-account \
-    --install-extension ms-vscode.powershell \
-    --install-extension ms-vscode.vscode-speech \
     --install-extension msazurermtools.azurerm-vscode-tools \
     --install-extension redhat.java \
     --install-extension redhat.vscode-commons \
@@ -90,15 +84,24 @@ RUN curl -sSLo /tmp/highlight-line.vsix https://github.com/valentjn/vscode-ltex/
     code-server --install-extension /tmp/vscode-ltex-13.1.0-offline-linux-x64.vsix -vvv && \
     rm -f /tmp/vscode-ltex-13.1.0-offline-linux-x64.vsix
 
-# Install apt packages:
+# gcloud
 RUN sudo apt-get install -y apt-transport-https ca-certificates gnupg lsb-release && \
     echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list && \
     curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key --keyring /usr/share/keyrings/cloud.google.gpg add - && \
     sudo apt-get update && sudo apt-get install google-cloud-cli
-RUN sudo apt-get install -y python3-pip
+RUN sudo apt-get install -y python3-pip python3-dev build-essential libffi-dev 
 RUN echo "source /usr/lib/google-cloud-sdk/completion.bash.inc" >> /home/coder/.bashrc && \
     echo "export CLOUDSDK_COMPONENT_MANAGER_DISABLE_UPDATE_CHECK=1" >> /home/coder/.bashrc && \
     sudo ln -sf /usr/bin/python3 /usr/bin/python
+
+## VCF dependencies
+COPY aws-vcf-env/requirements.txt /tmp/aws-requirements.txt
+COPY azure-vcf-env/requirements.txt /tmp/azure-requirements.txt
+COPY azure-vcf-env/prune_azure_mgmt_libs.sh /tmp/prune_azure_mgmt_libs.sh
+COPY gcp-vcf-env/requirements.txt /tmp/gcp-requirements.txt
+RUN python -m pip install -r /tmp/aws-requirements.txt -r /tmp/azure-requirements.txt -r /tmp/gcp-requirements.txt && \
+    sudo sed -i 's|mgmt_client_dir=.*|mgmt_client_dir=/home/coder/.local/lib/python3.10/site-packages/azure/mgmt|g' /tmp/prune_azure_mgmt_libs.sh && \
+    bash /tmp/prune_azure_mgmt_libs.sh
 
 ## semtag
 ARG SEMTAG_VERSION=0.1.1
@@ -124,9 +127,10 @@ RUN PATH=$PATH:/home/coder/.nvm/versions/node/v20.9.0/bin/ && npm install -g @ja
 
 ## AWS CLI
 ARG AWS_CLI_VERSION=2.13.33
-RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64-$AWS_CLI_VERSION.zip" -o "/tmp/awscliv2.zip" \
-    && sudo unzip /tmp/awscliv2.zip -d /tmp \
-    && sudo /tmp/aws/install 
+RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64-$AWS_CLI_VERSION.zip" -o "/tmp/awscliv2.zip" && \
+    sudo unzip /tmp/awscliv2.zip -d /tmp && \
+    sudo /tmp/aws/install && \
+    echo 'complete -C "/usr/local/bin/aws_completer"' >> /home/coder/.bashrc
 
 ## Azure CLI
 ARG AZ_CLI_VERSION=2.53.1
@@ -136,15 +140,16 @@ RUN sudo mkdir -p /etc/apt/keyrings && \
     AZ_DIST=$(lsb_release -cs) && \
     echo "deb [arch=`dpkg --print-architecture` signed-by=/etc/apt/keyrings/microsoft.gpg] https://packages.microsoft.com/repos/azure-cli/ $AZ_DIST main" | sudo tee /etc/apt/sources.list.d/azure-cli.list && \
     sudo apt-get update && \
-    sudo apt-get install -y azure-cli=$AZ_CLI_VERSION-1~$AZ_DIST
+    sudo apt-get install -y azure-cli=$AZ_CLI_VERSION-1~$AZ_DIST && \
+    echo 'source /etc/bash_completion.d/azure-cli' >> /home/coder/.bashrc
 
 ## Terraform
 ARG TERRAFORM=1.6.3
-RUN curl -O https://releases.hashicorp.com/terraform/${TERRAFORM}/terraform_${TERRAFORM}_linux_amd64.zip \
-    && sudo unzip terraform_${TERRAFORM}_linux_amd64.zip \
-    && sudo mv terraform /usr/local/bin/ \
-    && sudo rm terraform_${TERRAFORM}_linux_amd64.zip \
-    && terraform version
+RUN curl -O https://releases.hashicorp.com/terraform/${TERRAFORM}/terraform_${TERRAFORM}_linux_amd64.zip && \
+    sudo unzip terraform_${TERRAFORM}_linux_amd64.zip && \
+    sudo mv terraform /usr/local/bin/ && \
+    sudo rm terraform_${TERRAFORM}_linux_amd64.zip && \
+    terraform version
 
 ## Docker
 RUN sudo apt-get install -y apt-transport-https ca-certificates curl gnupg lsb-release && \
