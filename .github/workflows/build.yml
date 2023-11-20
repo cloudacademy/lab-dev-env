@@ -29,6 +29,27 @@ jobs:
           path: labs-cli-helpers
           token: ${{ secrets.GH_TOKEN }}
 
+      - name: Checkout helper repository
+        uses: actions/checkout@v4
+        with:
+          repository: cloudacademy/aws-vcf-env
+          path: aws-vcf-env
+          ref: python3.9
+
+      - name: Checkout helper repository
+        uses: actions/checkout@v4
+        with:
+          repository: cloudacademy/azure-vcf-env
+          path: azure-vcf-env
+          ref: python3.9
+
+      - name: Checkout helper repository
+        uses: actions/checkout@v4
+        with:
+          repository: cloudacademy/gcp-vcf-env
+          path: gcp-vcf-env
+          ref: python3.9
+
       - name: Set outputs
         id: vars
         run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
