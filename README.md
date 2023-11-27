@@ -6,7 +6,41 @@
 docker build --platform linux/amd64 -t lab-dev-env .
 ```
 
-## Using Container as a Development Environment
+## Running the Container
+
+The following sections provide commands for running the container as a development environment. If the host does not have any CLIs installed, the first method can be used. If the host has CLIs installed, the second will require less setup.
+
+### Authenticating Within the Container
+
+```sh
+docker run \
+    -e HOST_PROJECT=$(pwd) \
+    --mount type=bind,source=$(pwd),target=/home/project \
+    --mount type=bind,source=/var/run/docker.sock,target=/var/run/docker.sock \
+    -p1485:1485 \
+    --name lab-dev-env \
+    lab-dev-env
+```
+
+Some notes about the above command:
+
+- The `HOST_PROJECT` environment variable is required for preview and validate commands.
+- `--mount type=bind,source=$(pwd),target=/home/project` mounts the host directory (the lab repo directory) into the container.
+- `--mount type=bind,source=/var/run/docker.sock,target=/var/run/docker.sock` mounts the host's docker socket into the container. This is optional and only needed when developing CLI/IDE-based labs.
+- `-p1485:1485` exposes port 1485 on the host machine. This is the port that the IDE runs on.
+- `--name lab-dev-env` gives the container a name.
+- `lab-dev-env` is the name of the image to run.
+
+CLI tools can then be authenticated within the container if needed. For example:
+
+- `gh auth login`
+- `aws configure`
+- `az login`
+- `gcloud auth login`
+
+### For Hosts with CLI Tools Authenticated
+
+For systems with AWS, Az, gcloud, and/or gh CLIs installed, the authentication can be passed through using volume mounts. The following example is for a host with GitHub CLI, and AWS CLI installed.
 
 ```sh
 docker run \
@@ -19,6 +53,20 @@ docker run \
     --name lab-dev-env \
     lab-dev-env
 ```
+
+The following mount passes Azure CLI authentication through to the container:
+
+```sh
+    --mount type=bind,source=$HOME/.azure,target=/home/coder/.azure
+```
+
+The following mount passes Google Cloud CLI authentication through to the container:
+
+```sh
+    --mount type=bind,source=$HOME/.config/gcloud,target=/home/coder/.config/gcloud
+```
+
+## Using Container as a Development Environment
 
 Navigate to `http://localhost:1485` in your browser to access the IDE. You will need to acknowledge that it is an insecure connection. This is because the certificate is self-signed. Some features require using HTTPS, so a self-signed certificate is used for running the server.
 
