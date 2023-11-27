@@ -49,13 +49,3 @@ Your browser should now trust the certificate and features like Markdown Preview
 ## Using Container as Remote Dev Container with VS Code
 
 Not started
-
-## Extensions
-
-- Code Spell Checker
-
-
-## TODO
-
-- labs-cli tokens
-- labs-cli, labs-cli-helpers auto update
