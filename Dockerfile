@@ -103,7 +103,7 @@ COPY aws-vcf-env/requirements.txt /tmp/aws-requirements.txt
 COPY azure-vcf-env/requirements.txt /tmp/azure-requirements.txt
 COPY azure-vcf-env/prune_azure_mgmt_libs.sh /tmp/prune_azure_mgmt_libs.sh
 COPY gcp-vcf-env/requirements.txt /tmp/gcp-requirements.txt
-RUN python -m pip install -r /tmp/aws-requirements.txt -r /tmp/azure-requirements.txt -r /tmp/gcp-requirements.txt python-dotenv==1.0.0 && \
+RUN python -m pip install boto3 -r /tmp/aws-requirements.txt -r /tmp/azure-requirements.txt -r /tmp/gcp-requirements.txt python-dotenv==1.0.0 && \
     sudo sed -i 's|mgmt_client_dir=.*|mgmt_client_dir=/home/coder/.local/lib/python3.10/site-packages/azure/mgmt|g' /tmp/prune_azure_mgmt_libs.sh && \
     bash /tmp/prune_azure_mgmt_libs.sh
 
