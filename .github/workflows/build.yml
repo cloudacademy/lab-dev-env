@@ -21,6 +21,7 @@ jobs:
           repository: cloudacademy/labs-cli
           path: labs-cli
           token: ${{ secrets.GH_TOKEN }}
+          ref: feat/check-debug
 
       - name: Checkout helper repository
         uses: actions/checkout@v4

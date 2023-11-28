@@ -38,28 +38,20 @@ RUN sudo chown -R coder:coder /home/coder/.local && \
 # Use multiple --install-extension flags to install multiple extensions
 RUN code-server \
     --install-extension 4ops.terraform \
-    --install-extension aws-scripting-guy.cform \
-    --install-extension ClemensPeters.format-json \
     --install-extension DavidAnson.vscode-markdownlint \
     --install-extension dbaeumer.vscode-eslint \
     --install-extension DotJoshJohnson.xml \
     --install-extension foxundermoon.shell-format \
-    --install-extension GitHub.copilot \
-    --install-extension GitHub.copilot-chat \
-    --install-extension github.vscode-github-actions \
     --install-extension hashicorp.terraform \
     --install-extension ms-azuretools.vscode-docker \
     --install-extension ms-dotnettools.vscode-dotnet-runtime \
-    --install-extension ms-python.autopep8 \
     --install-extension ms-python.python \
-    --install-extension ms-python.vscode-pylance \
     --install-extension ms-toolsai.jupyter \
     --install-extension ms-toolsai.jupyter-keymap \
     --install-extension ms-toolsai.jupyter-renderers \
     --install-extension ms-toolsai.vscode-jupyter-cell-tags \
     --install-extension ms-toolsai.vscode-jupyter-slideshow \
     --install-extension ms-vscode.azure-account \
-    --install-extension msazurermtools.azurerm-vscode-tools \
     --install-extension redhat.java \
     --install-extension redhat.vscode-commons \
     --install-extension redhat.vscode-yaml \
@@ -74,13 +66,27 @@ RUN mkdir -p /home/coder/.local/share/code-server/extensions/foxundermoon.shell-
     curl -L https://github.com/mvdan/sh/releases/download/v3.0.1/shfmt_v3.0.1_linux_amd64 -o /home/coder/.local/share/code-server/extensions/foxundermoon.shell-format-7.0.1-universal/bin/shfmt_v3.0.1_linux_amd64 && \
     chmod +x /home/coder/.local/share/code-server/extensions/foxundermoon.shell-format-7.0.1-universal/bin/shfmt_v3.0.1_linux_amd64
 
-# Install a VS Code extension from a .vsix file
-RUN curl -sSLo /tmp/highlight-line.vsix https://github.com/valentjn/vscode-ltex/releases/download/13.1.0/vscode-ltex-13.1.0-offline-linux-x64.vsix && \
-    code-server --install-extension /tmp/vscode-ltex-13.1.0-offline-linux-x64.vsix -vvv && \
-    rm -f /tmp/vscode-ltex-13.1.0-offline-linux-x64.vsix
-RUN curl -sSLo /tmp/ms-python.autopep8.vsix https://marketplace.visualstudio.com/_apis/public/gallery/publishers/ms-python/vsextensions/autopep8/2023.9.13201008/vspackage && \
-    code-server --install-extension /tmp/ms-python.autopep8.vsix -vvv && \
-    rm -f /tmp/ms-python.autopep8.vsix
+# Install a VS Code extension from a .vsix file (using gist to avoid marketplace throttling & not every extension repo has vsix release)
+# Copilot Chat prepared based on https://github.com/coder/code-server/discussions/4363#discussioncomment-7244791 (renaming .vsix->.zip, changing package.json engines.vscode version requirement, re-zipping)
+RUN curl -sSLo /tmp/vscode-ltex-13.1.0-offline-linux-x64.vsix https://github.com/valentjn/vscode-ltex/releases/download/13.1.0/vscode-ltex-13.1.0-offline-linux-x64.vsix && \
+    curl -sSLo /tmp/ms-python.autopep8.vsix https://gist.github.com/lrakai/413d454bebca896ab72236f906c4fb7a/raw/354e77ace3eaec5420a0b7f6e51858aa4f57786a/ms-python.autopep8-2023.9.13201008.vsix && \
+    curl -sSLo /tmp/clemenspeters.format-json.vsix https://gist.github.com/lrakai/413d454bebca896ab72236f906c4fb7a/raw/354e77ace3eaec5420a0b7f6e51858aa4f57786a/ClemensPeters.format-json-1.0.3.vsix && \
+    curl -sSLo /tmp/github.copilot.vsix https://gist.github.com/lrakai/413d454bebca896ab72236f906c4fb7a/raw/354e77ace3eaec5420a0b7f6e51858aa4f57786a/GitHub.copilot-1.138.570.vsix && \
+    curl -sSLo /tmp/github.copilot-chat.vsix https://gist.github.com/lrakai/413d454bebca896ab72236f906c4fb7a/raw/ce1187f6d80cc51e206063053b4f4be8be6395da/GitHub.copilot-chat-0.11.2023112701.vsix && \
+    curl -sSLo /tmp/VisualStudioExptTeam.vscodeintellicode.vsix https://gist.github.com/lrakai/413d454bebca896ab72236f906c4fb7a/raw/354e77ace3eaec5420a0b7f6e51858aa4f57786a/VisualStudioExptTeam.vscodeintellicode-1.2.30.vsix && \
+    code-server -vvv \
+        --install-extension /tmp/ms-python.autopep8.vsix \
+        --install-extension /tmp/clemenspeters.format-json.vsix \
+        --install-extension /tmp/github.copilot.vsix \
+       --install-extension /tmp/github.copilot-chat.vsix \
+        --install-extension /tmp/VisualStudioExptTeam.vscodeintellicode.vsix \
+        --install-extension /tmp/vscode-ltex-13.1.0-offline-linux-x64.vsix && \
+    rm -f /tmp/ms-python.autopep8.vsix \
+        /tmp/clemenspeters.format-json.vsix \
+        /tmp/github.copilot.vsix \
+        /tmp/github.copilot-chat.vsix \
+        /tmp/VisualStudioExptTeam.vscodeintellicode.vsix \
+        /tmp/vscode-ltex-13.1.0-offline-linux-x64.vsix 
 
 # gcloud
 RUN sudo apt-get install -y apt-transport-https ca-certificates gnupg lsb-release && \
@@ -128,7 +134,7 @@ ARG AWS_CLI_VERSION=2.13.33
 RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64-$AWS_CLI_VERSION.zip" -o "/tmp/awscliv2.zip" && \
     sudo unzip /tmp/awscliv2.zip -d /tmp && \
     sudo /tmp/aws/install && \
-    echo 'complete -C "/usr/local/bin/aws_completer"' >> /home/coder/.bashrc
+    echo 'complete -C "/usr/local/bin/aws_completer" aws' >> /home/coder/.bashrc
 
 ## Azure CLI
 ARG AZ_CLI_VERSION=2.53.1
