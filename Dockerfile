@@ -72,19 +72,19 @@ RUN curl -sSLo /tmp/vscode-ltex-13.1.0-offline-linux-x64.vsix https://github.com
     curl -sSLo /tmp/ms-python.autopep8.vsix https://gist.github.com/lrakai/413d454bebca896ab72236f906c4fb7a/raw/354e77ace3eaec5420a0b7f6e51858aa4f57786a/ms-python.autopep8-2023.9.13201008.vsix && \
     curl -sSLo /tmp/clemenspeters.format-json.vsix https://gist.github.com/lrakai/413d454bebca896ab72236f906c4fb7a/raw/354e77ace3eaec5420a0b7f6e51858aa4f57786a/ClemensPeters.format-json-1.0.3.vsix && \
     curl -sSLo /tmp/github.copilot.vsix https://gist.github.com/lrakai/413d454bebca896ab72236f906c4fb7a/raw/354e77ace3eaec5420a0b7f6e51858aa4f57786a/GitHub.copilot-1.138.570.vsix && \
-    curl -sSLo /tmp/github.copilot-chat.vsix https://gist.github.com/lrakai/413d454bebca896ab72236f906c4fb7a/raw/ce1187f6d80cc51e206063053b4f4be8be6395da/GitHub.copilot-chat-0.11.2023112701.vsix && \
+    #curl -sSLo /tmp/github.copilot-chat.vsix https://gist.github.com/lrakai/413d454bebca896ab72236f906c4fb7a/raw/ce1187f6d80cc51e206063053b4f4be8be6395da/GitHub.copilot-chat-0.11.2023112701.vsix && \
     curl -sSLo /tmp/VisualStudioExptTeam.vscodeintellicode.vsix https://gist.github.com/lrakai/413d454bebca896ab72236f906c4fb7a/raw/354e77ace3eaec5420a0b7f6e51858aa4f57786a/VisualStudioExptTeam.vscodeintellicode-1.2.30.vsix && \
     code-server -vvv \
         --install-extension /tmp/ms-python.autopep8.vsix \
         --install-extension /tmp/clemenspeters.format-json.vsix \
         --install-extension /tmp/github.copilot.vsix \
-       --install-extension /tmp/github.copilot-chat.vsix \
+        #--install-extension /tmp/github.copilot-chat.vsix \
         --install-extension /tmp/VisualStudioExptTeam.vscodeintellicode.vsix \
         --install-extension /tmp/vscode-ltex-13.1.0-offline-linux-x64.vsix && \
     rm -f /tmp/ms-python.autopep8.vsix \
         /tmp/clemenspeters.format-json.vsix \
         /tmp/github.copilot.vsix \
-        /tmp/github.copilot-chat.vsix \
+        #/tmp/github.copilot-chat.vsix \
         /tmp/VisualStudioExptTeam.vscodeintellicode.vsix \
         /tmp/vscode-ltex-13.1.0-offline-linux-x64.vsix 
 
